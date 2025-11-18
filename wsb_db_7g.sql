@@ -71,13 +71,26 @@ CREATE TABLE
         FOREIGN KEY (`university_id`) REFERENCES `university` (`id`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `subjects`;
+DROP TABLE IF EXISTS `courses`;
 
 CREATE TABLE
-    `subjects` (
+    `courses` (
         `id` INT AUTO_INCREMENT PRIMARY KEY,
         `name` VARCHAR(200) NOT NULL,
         `code` VARCHAR(20) UNIQUE NOT NULL,
         `ects` INT NOT NULL,
         `description` TEXT DEFAULT NULL,
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `students`;
+
+CREATE TABLE
+    `students` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        'number_index' VARCHAR(20) UNIQUE NOT NULL,
+        `name` VARCHAR(50) NOT NULL,
+        `surname` VARCHAR(50) NOT NULL,
+        `sex` ENUM ('unknown', 'male', 'female', 'other') DEFAULT 'unknown',
+        `pesel` VARCHAR(11) UNIQUE NOT NULL,
+        'birth_date' DATE NOT NULL,
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

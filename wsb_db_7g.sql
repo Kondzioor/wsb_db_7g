@@ -70,3 +70,14 @@ CREATE TABLE
         ) DEFAULT 'other' `university_id` INT NOT NULL, -- i'm not sure
         FOREIGN KEY (`university_id`) REFERENCES `university` (`id`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `subjects`;
+
+CREATE TABLE
+    `subjects` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `name` VARCHAR(200) NOT NULL,
+        `code` VARCHAR(20) UNIQUE NOT NULL,
+        `ects` INT NOT NULL,
+        `description` TEXT DEFAULT NULL,
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

@@ -102,6 +102,17 @@ CREATE TABLE
         `id` INT AUTO_INCREMENT PRIMARY KEY,
         `name` VARCHAR(100) NOT NULL,
         `year` INT NOT NULL,
-        `university_id` INT NOT NULL,
-        FOREIGN KEY (`university_id`) REFERENCES `university` (`id`),
+        `lecturer_id` INT NOT NULL,
+        `specialization` VARCHAR(100) NOT NULL,
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `partial_grades`;
+
+CREATE TABLE
+    `partial_grades` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `student_id` INT NOT NULL,
+        `course_id` INT NOT NULL,
+        `grade` DECIMAL(3, 2) NOT NULL,
+        `date` DATE NOT NULL,
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

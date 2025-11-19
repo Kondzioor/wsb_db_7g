@@ -94,3 +94,14 @@ CREATE TABLE
         `pesel` VARCHAR(11) UNIQUE NOT NULL,
         'birth_date' DATE NOT NULL,
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `groups`;
+
+CREATE TABLE
+    `groups` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `name` VARCHAR(100) NOT NULL,
+        `year` INT NOT NULL,
+        `university_id` INT NOT NULL,
+        FOREIGN KEY (`university_id`) REFERENCES `university` (`id`),
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

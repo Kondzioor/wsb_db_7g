@@ -75,7 +75,7 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         UNIQUE KEY `lecturers_email_uq` (`email`),
         UNIQUE KEY `lecturers_pesel_uq` (`pesel`),
-        UNIQUE KEY `lecturers_account_number_uq` (`account_number`),
+        UNIQUE KEY `lecturers_account_number_uq` (`account_number`)
         -- `university_id` INT NOT NULL, -- i'm not sure
         -- FOREIGN KEY (`university_id`) REFERENCES `university` (`id`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
@@ -91,7 +91,7 @@ CREATE TABLE
         `description` TEXT DEFAULT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `courses_name_uq` (`name`),
-        UNIQUE KEY `courses_code_uq` (`code`),
+        UNIQUE KEY `courses_code_uq` (`code`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `students`;
@@ -99,15 +99,15 @@ DROP TABLE IF EXISTS `students`;
 CREATE TABLE
     `students` (
         `id` INT unsigned NOT NULL AUTO_INCREMENT,
-        'number_index' VARCHAR(20) NOT NULL,
+        `number_index` VARCHAR(20) NOT NULL,
         `name` VARCHAR(50) NOT NULL,
         `surname` VARCHAR(50) NOT NULL,
         `sex` ENUM ('unknown', 'male', 'female', 'other') DEFAULT 'unknown',
         `pesel` VARCHAR(11) NOT NULL,
-        'birth_date' DATE NOT NULL,
+        `birth_date` DATE NOT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `students_number_index_uq` (`number_index`),
-        UNIQUE KEY `students_pesel_uq` (`pesel`),
+        UNIQUE KEY `students_pesel_uq` (`pesel`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `groups`;
@@ -120,7 +120,7 @@ CREATE TABLE
         `lecturer_id` INT NOT NULL,
         `specialization` VARCHAR(100) NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `group_uq` (`name`, `year`),
+        UNIQUE KEY `group_uq` (`name`, `year`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `partial_grades`;
@@ -132,7 +132,7 @@ CREATE TABLE
         `course_id` INT NOT NULL,
         `grade` DECIMAL(3, 2) NOT NULL,
         `date` DATE NOT NULL,
-        PRIMARY KEY (`id`),
+        PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `final_grades`;
@@ -144,5 +144,5 @@ CREATE TABLE
         `course_id` INT NOT NULL,
         `grade` DECIMAL(3, 2) NOT NULL,
         `date` DATE NOT NULL,
-        PRIMARY KEY (`id`),
+        PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

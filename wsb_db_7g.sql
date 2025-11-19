@@ -116,3 +116,14 @@ CREATE TABLE
         `grade` DECIMAL(3, 2) NOT NULL,
         `date` DATE NOT NULL,
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `final_grades`;
+
+CREATE TABLE
+    `final_grades` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `student_id` INT NOT NULL,
+        `course_id` INT NOT NULL,
+        `grade` DECIMAL(3, 2) NOT NULL,
+        `date` DATE NOT NULL,
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

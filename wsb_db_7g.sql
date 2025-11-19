@@ -25,13 +25,13 @@ DROP TABLE IF EXISTS `university`;
 
 CREATE TABLE
     `university` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(300) NOT NULL,
         `address` VARCHAR(300) NOT NULL,
         `zip_code` VARCHAR(20) NOT NULL,
         `city` VARCHAR(100) NOT NULL,
         `phone` VARCHAR(20) NOT NULL,
-        `email` VARCHAR(100) NOT NULL, --main_email
+        `email` VARCHAR(100) NOT NULL,
         `website` VARCHAR(100) NOT NULL,
         `rector_name` VARCHAR(50) NOT NULL,
         `rector_surname` VARCHAR(50) NOT NULL,
@@ -39,6 +39,7 @@ CREATE TABLE
         `dean_surname` VARCHAR(50) NOT NULL,
         `secretariat_phone` VARCHAR(20) NOT NULL,
         `secretariat_email` VARCHAR(100) NOT NULL,
+        PRIMARY KEY (`id`),
         UNIQUE KEY `university_name_uq` (`name`),
         UNIQUE KEY `university_email_uq` (`email`),
         UNIQUE KEY `university_website_uq` (`website`),
@@ -46,11 +47,11 @@ CREATE TABLE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 -- -- -------------------------------------------------------------------------------
-DROP TABLE IF EXISTS `teaching_staff`;
+DROP TABLE IF EXISTS `lecturers`;
 
 CREATE TABLE
-    `teaching_staff` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `lecturers` (
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(50) NOT NULL,
         `surname` VARCHAR(50) NOT NULL,
         `sex` ENUM ('unknown', 'male', 'female', 'other') DEFAULT 'unknown',
@@ -72,9 +73,10 @@ CREATE TABLE
             'professor',
             'other'
         ) DEFAULT 'other',
-        UNIQUE KEY `teaching_staff_email_uq` (`email`),
-        UNIQUE KEY `teaching_staff_pesel_uq` (`pesel`),
-        UNIQUE KEY `teaching_staff_account_number_uq` (`account_number`),
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `lecturers_email_uq` (`email`),
+        UNIQUE KEY `lecturers_pesel_uq` (`pesel`),
+        UNIQUE KEY `lecturers_account_number_uq` (`account_number`),
         -- `university_id` INT NOT NULL, -- i'm not sure
         -- FOREIGN KEY (`university_id`) REFERENCES `university` (`id`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
@@ -83,11 +85,12 @@ DROP TABLE IF EXISTS `courses`;
 
 CREATE TABLE
     `courses` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(200) NOT NULL,
         `code` VARCHAR(20) NOT NULL,
         `ects` INT NOT NULL,
         `description` TEXT DEFAULT NULL,
+        PRIMARY KEY (`id`),
         UNIQUE KEY `courses_name_uq` (`name`),
         UNIQUE KEY `courses_code_uq` (`code`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
@@ -96,13 +99,14 @@ DROP TABLE IF EXISTS `students`;
 
 CREATE TABLE
     `students` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
         'number_index' VARCHAR(20) NOT NULL,
         `name` VARCHAR(50) NOT NULL,
         `surname` VARCHAR(50) NOT NULL,
         `sex` ENUM ('unknown', 'male', 'female', 'other') DEFAULT 'unknown',
         `pesel` VARCHAR(11) NOT NULL,
         'birth_date' DATE NOT NULL,
+        PRIMARY KEY (`id`),
         UNIQUE KEY `students_number_index_uq` (`number_index`),
         UNIQUE KEY `students_pesel_uq` (`pesel`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
@@ -111,31 +115,35 @@ DROP TABLE IF EXISTS `groups`;
 
 CREATE TABLE
     `groups` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(100) NOT NULL,
         `year` INT NOT NULL,
         `lecturer_id` INT NOT NULL,
         `specialization` VARCHAR(100) NOT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `group_uq` (`name`, `year`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `partial_grades`;
 
 CREATE TABLE
     `partial_grades` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `student_id` INT NOT NULL,
         `course_id` INT NOT NULL,
         `grade` DECIMAL(3, 2) NOT NULL,
         `date` DATE NOT NULL,
+        PRIMARY KEY (`id`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `final_grades`;
 
 CREATE TABLE
     `final_grades` (
-        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `student_id` INT NOT NULL,
         `course_id` INT NOT NULL,
         `grade` DECIMAL(3, 2) NOT NULL,
         `date` DATE NOT NULL,
+        PRIMARY KEY (`id`),
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

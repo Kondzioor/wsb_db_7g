@@ -195,7 +195,7 @@ CREATE TABLE
         `student_id` INT unsigned NOT NULL,
         `course_id` INT unsigned NOT NULL,
         `group_course_id` INT unsigned NOT NULL,
-        `grade` DECIMAL(2, 1) NOT NULL, -- enum('passed','failed', pending) DEFAULT pending ?
+        `grade` DECIMAL(2, 1) NOT NULL, -- status enum('passed','failed', pending) DEFAULT pending ?
         `date` DATE NOT NULL,
         PRIMARY KEY (`id`),
         CONSTRAINT `final_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), -- on update cascade? on delete restrict?

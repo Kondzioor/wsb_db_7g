@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `university`;
 CREATE TABLE
     `university` (
         `id` INT unsigned NOT NULL AUTO_INCREMENT,
-        `name` VARCHAR(300) NOT NULL,
+        `name` VARCHAR(300) NOT NULL, --full name of university
         `address` VARCHAR(300) NOT NULL,
         `zip_code` VARCHAR(20) NOT NULL,
         `city` VARCHAR(100) NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE
         `name` VARCHAR(50) NOT NULL,
         `surname` VARCHAR(50) NOT NULL,
         `sex` ENUM ('unknown', 'male', 'female', 'other') DEFAULT 'unknown',
-        `pesel` VARCHAR(11) NOT NULL,
+        `pesel_enc` VARCHAR(11) NOT NULL, -- BLOB encryption?
         `email` VARCHAR(100) NOT NULL,
         `phone` VARCHAR(20) NOT NULL,
         `street` VARCHAR(100) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE
         `city` VARCHAR(100) NOT NULL,
         `hire_date` DATE NOT NULL,
         `termination_date` DATE DEFAULT NULL,
-        `account_number` VARCHAR(34) NOT NULL,
+        `account_number` VARCHAR(26) NOT NULL,
         `degree` ENUM (
             'engineer',
             'master',
@@ -75,9 +75,7 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         UNIQUE KEY `lecturers_email_uq` (`email`),
         UNIQUE KEY `lecturers_pesel_uq` (`pesel`),
-        UNIQUE KEY `lecturers_account_number_uq` (`account_number`)
-        -- `university_id` INT NOT NULL, -- i'm not sure
-        -- FOREIGN KEY (`university_id`) REFERENCES `university` (`id`),
+        UNIQUE KEY `lecturers_account_number_uq` (`account_number`) CONSTRAINT `lecturers_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `courses`;

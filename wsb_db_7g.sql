@@ -140,9 +140,35 @@ CREATE TABLE
         `group_id` INT NOT NULL,
         `enroll_date` DATE NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `student_group_uq` (`student_id`, `group_id`),
-        CONSTRAINT `student_groups_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`),
-        CONSTRAINT `student_groups_group_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
+        UNIQUE KEY `student_group_uq` (`student_id`, `group_id`), --
+        CONSTRAINT `student_groups_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), --
+        CONSTRAINT `student_groups_group_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) --
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `course_lecturers`;
+
+CREATE TABLE
+    `course_lecturers` (
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
+        `course_id` INT NOT NULL,
+        `lecturer_id` INT NOT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `course_lecturer_uq` (`course_id`, `lecturer_id`), --
+        CONSTRAINT `course_lecturers_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`), --
+        CONSTRAINT `course_lecturers_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`) --
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `group_courses`;
+
+CREATE TABLE
+    `group_courses` (
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
+        `group_id` INT NOT NULL,
+        `course_id` INT NOT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `group_course_uq` (`group_id`, `course_id`), --
+        CONSTRAINT `group_courses_group_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`), --
+        CONSTRAINT `group_courses_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) --
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `partial_grades`;
@@ -152,9 +178,12 @@ CREATE TABLE
         `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `student_id` INT NOT NULL,
         `course_id` INT NOT NULL,
-        `grade` DECIMAL(3, 2) NOT NULL,
+        `group_course_id` INT unsigned NOT NULL,
+        `grade` DECIMAL(2, 1) NOT NULL, --check?   grade type? description?
         `date` DATE NOT NULL,
-        PRIMARY KEY (`id`)
+        PRIMARY KEY (`id`) CONSTRAINT `partial_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), --
+        CONSTRAINT `partial_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`), --
+        CONSTRAINT `partial_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`) --
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `final_grades`;
@@ -164,7 +193,10 @@ CREATE TABLE
         `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `student_id` INT NOT NULL,
         `course_id` INT NOT NULL,
-        `grade` DECIMAL(3, 2) NOT NULL,
+        `group_course_id` INT unsigned NOT NULL,
+        `grade` DECIMAL(2, 1) NOT NULL, -- enum('passed','failed', pending) DEFAULT pending ?
         `date` DATE NOT NULL,
-        PRIMARY KEY (`id`)
+        PRIMARY KEY (`id`) CONSTRAINT `final_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), -- on update cascade? on delete restrict?
+        CONSTRAINT `final_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) --
+        CONSTRAINT `final_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`) --
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

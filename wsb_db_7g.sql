@@ -21,12 +21,29 @@ SET
 
 USE wsb_db;
 
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE
+    `users` (
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
+        `username` VARCHAR(50) NOT NULL,
+        `password_hash` VARCHAR(255) NOT NULL,
+        `email` VARCHAR(100) NOT NULL,
+        `role` ENUM ('admin', 'lecturer', 'student') NOT NULL,
+        `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `users_email_uq` (`email`),
+        UNIQUE KEY `users_username_uq` (`username`),
+        CONSTRAINT `users_student_fk` FOREIGN KEY (`id`) REFERENCES `students` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+        CONSTRAINT `users_lecturer_fk` FOREIGN KEY (`id`) REFERENCES `lecturers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `university`;
 
 CREATE TABLE
     `university` (
         `id` INT unsigned NOT NULL AUTO_INCREMENT,
-        `name` VARCHAR(300) NOT NULL, -- full name of university
+        `name` VARCHAR(300) NOT NULL,
         `address` VARCHAR(300) NOT NULL,
         `zip_code` VARCHAR(20) NOT NULL,
         `city` VARCHAR(100) NOT NULL,
@@ -54,7 +71,7 @@ CREATE TABLE
         `name` VARCHAR(50) NOT NULL,
         `surname` VARCHAR(50) NOT NULL,
         `sex` ENUM ('unknown', 'male', 'female', 'other') DEFAULT 'unknown',
-        `pesel` VARCHAR(11) NOT NULL, -- BLOB encryption?
+        `pesel` VARCHAR(11) NOT NULL,
         `email` VARCHAR(100) NOT NULL,
         `phone` VARCHAR(20) NOT NULL,
         `street` VARCHAR(100) NOT NULL,
@@ -76,7 +93,6 @@ CREATE TABLE
         UNIQUE KEY `lecturers_email_uq` (`email`),
         UNIQUE KEY `lecturers_pesel_uq` (`pesel`),
         UNIQUE KEY `lecturers_account_number_uq` (`account_number`)
-        -- ON UPDATE CASCADE ON DELETE RESTRICT??
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `lecturer_universities`;
@@ -88,8 +104,8 @@ CREATE TABLE
         `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `lecturer_university_uq` (`lecturer_id`, `university_id`), --
-        CONSTRAINT `lecturer_universities_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`), --
-        CONSTRAINT `lecturer_universities_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) --
+        CONSTRAINT `lecturer_universities_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `lecturer_universities_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `courses`;
@@ -99,13 +115,13 @@ CREATE TABLE
         `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(200) NOT NULL,
         `code` VARCHAR(20) NOT NULL,
-        `ects` TINYINT unsigned NOT NULL, -- chceck(ects > 0 and ects <= 30)   decimal(2,0)?
+        `ects` TINYINT unsigned NOT NULL,
         `description` TEXT DEFAULT NULL,
         `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `courses_name_uq` (`name`),
         UNIQUE KEY `courses_code_uq` (`code`),
-        CONSTRAINT `courses_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) --
+        CONSTRAINT `courses_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `students`;
@@ -117,13 +133,13 @@ CREATE TABLE
         `name` VARCHAR(50) NOT NULL,
         `surname` VARCHAR(50) NOT NULL,
         `sex` ENUM ('unknown', 'male', 'female', 'other') DEFAULT 'unknown',
-        `pesel` VARCHAR(11) NOT NULL, -- BLOB ?
+        `pesel` VARCHAR(11) NOT NULL,
         `birth_date` DATE NOT NULL,
         `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `students_number_index_uq` (`number_index`),
         UNIQUE KEY `students_pesel_uq` (`pesel`),
-        CONSTRAINT `students_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) --
+        CONSTRAINT `students_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `groups`;
@@ -138,8 +154,8 @@ CREATE TABLE
         `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `group_uq` (`name`, `year`), -- ?
-        CONSTRAINT `groups_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`), --
-        CONSTRAINT `groups_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) --
+        CONSTRAINT `groups_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+        CONSTRAINT `groups_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `student_groups`;
@@ -151,9 +167,9 @@ CREATE TABLE
         `group_id` INT unsigned NOT NULL,
         `enroll_date` DATE NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `student_group_uq` (`student_id`, `group_id`), --
-        CONSTRAINT `student_groups_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), --
-        CONSTRAINT `student_groups_group_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) --
+        UNIQUE KEY `student_group_uq` (`student_id`, `group_id`),
+        CONSTRAINT `student_groups_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `student_groups_group_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `course_lecturers`;
@@ -164,9 +180,9 @@ CREATE TABLE
         `course_id` INT unsigned NOT NULL,
         `lecturer_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `course_lecturer_uq` (`course_id`, `lecturer_id`), --
-        CONSTRAINT `course_lecturers_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`), --
-        CONSTRAINT `course_lecturers_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`) --
+        UNIQUE KEY `course_lecturer_uq` (`course_id`, `lecturer_id`),
+        CONSTRAINT `course_lecturers_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `course_lecturers_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `group_courses`;
@@ -177,9 +193,9 @@ CREATE TABLE
         `group_id` INT unsigned NOT NULL,
         `course_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `group_course_uq` (`group_id`, `course_id`), --
-        CONSTRAINT `group_courses_group_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`), --
-        CONSTRAINT `group_courses_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) --
+        UNIQUE KEY `group_course_uq` (`group_id`, `course_id`),
+        CONSTRAINT `group_courses_group_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `group_courses_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `semesters`;
@@ -192,7 +208,7 @@ CREATE TABLE
         `end_date` DATE NOT NULL,
         `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `semesters_name_uq` (`name`) --
+        UNIQUE KEY `semesters_name_uq` (`name`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `partial_grades`;
@@ -203,14 +219,14 @@ CREATE TABLE
         `student_id` INT unsigned NOT NULL,
         `course_id` INT unsigned NOT NULL,
         `group_course_id` INT unsigned NOT NULL,
-        `grade` DECIMAL(2, 1) NOT NULL, -- check?   grade type? description?
+        `grade` DECIMAL(2, 1) NOT NULL,
         `date` DATE NOT NULL,
         `semester_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
-        CONSTRAINT `partial_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), --
-        CONSTRAINT `partial_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`), --
-        CONSTRAINT `partial_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`), --
-        CONSTRAINT `partial_grades_semester_fk` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) --
+        CONSTRAINT `partial_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+        CONSTRAINT `partial_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+        CONSTRAINT `partial_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+        CONSTRAINT `partial_grades_semester_fk` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `final_grades`;
@@ -221,12 +237,25 @@ CREATE TABLE
         `student_id` INT unsigned NOT NULL,
         `course_id` INT unsigned NOT NULL,
         `group_course_id` INT unsigned NOT NULL,
-        `grade` DECIMAL(2, 1) NOT NULL, -- status enum('passed','failed', pending) DEFAULT pending ?
+        `grade` DECIMAL(2, 1) NOT NULL,
         `date` DATE NOT NULL,
         `semester_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
-        CONSTRAINT `final_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), -- on update cascade? on delete restrict?
-        CONSTRAINT `final_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`), --
-        CONSTRAINT `final_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`), --
-        CONSTRAINT `final_grades_semester_fk` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) --
+        CONSTRAINT `final_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+        CONSTRAINT `final_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+        CONSTRAINT `final_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+        CONSTRAINT `final_grades_semester_fk` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `system_logs`;
+
+CREATE TABLE
+    `system_logs` (
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
+        `user_id` INT unsigned DEFAULT NULL,
+        `event_type` VARCHAR(50) NOT NULL,
+        `event_description` TEXT NOT NULL,
+        `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        CONSTRAINT `system_logs_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

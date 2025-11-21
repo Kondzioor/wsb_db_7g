@@ -21,23 +21,6 @@ SET
 
 USE wsb_db;
 
-DROP TABLE IF EXISTS `users`;
-
-CREATE TABLE
-    `users` (
-        `id` INT unsigned NOT NULL AUTO_INCREMENT,
-        `username` VARCHAR(50) NOT NULL,
-        `password_hash` VARCHAR(255) NOT NULL,
-        `email` VARCHAR(100) NOT NULL,
-        `role` ENUM ('admin', 'lecturer', 'student') NOT NULL,
-        `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (`id`),
-        UNIQUE KEY `users_email_uq` (`email`),
-        UNIQUE KEY `users_username_uq` (`username`),
-        CONSTRAINT `users_student_fk` FOREIGN KEY (`id`) REFERENCES `students` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-        CONSTRAINT `users_lecturer_fk` FOREIGN KEY (`id`) REFERENCES `lecturers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
-
 DROP TABLE IF EXISTS `university`;
 
 CREATE TABLE
@@ -142,6 +125,23 @@ CREATE TABLE
         CONSTRAINT `students_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE
+    `users` (
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
+        `username` VARCHAR(50) NOT NULL UNIQUE,
+        `password_hash` VARCHAR(255) NOT NULL,
+        `email` VARCHAR(100) UNIQUE,
+        `role` ENUM ('student', 'lecturer', 'admin') NOT NULL DEFAULT 'student',
+        `linked_student_id` INT unsigned DEFAULT NULL,
+        `linked_lecturer_id` INT unsigned DEFAULT NULL,
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        CONSTRAINT `fk_users_students` FOREIGN KEY (`linked_student_id`) REFERENCES `students` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+        CONSTRAINT `fk_users_lecturers` FOREIGN KEY (`linked_lecturer_id`) REFERENCES `lecturers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `groups`;
 
 CREATE TABLE
@@ -149,11 +149,11 @@ CREATE TABLE
         `id` INT unsigned NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(100) NOT NULL,
         `year` INT NOT NULL,
-        `lecturer_id` INT unsigned NOT NULL,
+        `lecturer_id` INT unsigned DEFAULT NULL,
         `specialization` VARCHAR(100) NOT NULL,
         `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `group_uq` (`name`, `year`), -- ?
+        UNIQUE KEY `group_uq` (`name`, `year`),
         CONSTRAINT `groups_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
         CONSTRAINT `groups_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

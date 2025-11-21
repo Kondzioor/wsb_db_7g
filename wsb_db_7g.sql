@@ -72,13 +72,25 @@ CREATE TABLE
             'professor',
             'other'
         ) DEFAULT 'other',
-        `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `lecturers_email_uq` (`email`),
         UNIQUE KEY `lecturers_pesel_uq` (`pesel`),
         UNIQUE KEY `lecturers_account_number_uq` (`account_number`),
         CONSTRAINT `lecturers_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`)
         -- ON UPDATE CASCADE ON DELETE RESTRICT??
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `lecturer_universities`;
+
+CREATE TABLE
+    `lecturer_universities` (
+        `id` INT unsigned NOT NULL AUTO_INCREMENT,
+        `lecturer_id` INT unsigned NOT NULL,
+        `university_id` INT unsigned NOT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `lecturer_university_uq` (`lecturer_id`, `university_id`), --
+        CONSTRAINT `lecturer_universities_lecturer_fk` FOREIGN KEY (`lecturer_id`) REFERENCES `lecturers` (`id`), --
+        CONSTRAINT `lecturer_universities_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`) --
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `courses`;

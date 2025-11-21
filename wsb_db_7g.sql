@@ -75,8 +75,7 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         UNIQUE KEY `lecturers_email_uq` (`email`),
         UNIQUE KEY `lecturers_pesel_uq` (`pesel`),
-        UNIQUE KEY `lecturers_account_number_uq` (`account_number`),
-        CONSTRAINT `lecturers_university_fk` FOREIGN KEY (`university_id`) REFERENCES `university` (`id`)
+        UNIQUE KEY `lecturers_account_number_uq` (`account_number`)
         -- ON UPDATE CASCADE ON DELETE RESTRICT??
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -193,7 +192,7 @@ CREATE TABLE
         `end_date` DATE NOT NULL,
         `university_id` INT unsigned NOT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `semesters_name_uq` (`name`), --
+        UNIQUE KEY `semesters_name_uq` (`name`) --
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `partial_grades`;
@@ -210,7 +209,7 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         CONSTRAINT `partial_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), --
         CONSTRAINT `partial_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`), --
-        CONSTRAINT `partial_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`) --
+        CONSTRAINT `partial_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`), --
         CONSTRAINT `partial_grades_semester_fk` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) --
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -228,6 +227,6 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         CONSTRAINT `final_grades_student_fk` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`), -- on update cascade? on delete restrict?
         CONSTRAINT `final_grades_course_fk` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`), --
-        CONSTRAINT `final_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`) --
+        CONSTRAINT `final_grades_group_course_fk` FOREIGN KEY (`group_course_id`) REFERENCES `group_courses` (`id`), --
         CONSTRAINT `final_grades_semester_fk` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) --
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
